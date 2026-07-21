@@ -94,3 +94,45 @@ WHERE category = 'Beauty';
 SELECT *
 FROM retail_sales
 WHERE total_sale > 1000;
+
+-- Q6. Number of transactions by gender
+
+SELECT
+    gender,
+    COUNT(*) AS total_transactions
+FROM retail_sales
+GROUP BY gender;
+
+-- Q7. Average sale amount by category
+
+SELECT
+    category,
+    ROUND(AVG(total_sale), 2) AS average_sale
+FROM retail_sales
+GROUP BY category;
+
+-- Q8. Top 5 highest sales transactions
+
+SELECT *
+FROM retail_sales
+ORDER BY total_sale DESC
+LIMIT 5;
+
+-- Q9. Monthly sales revenue
+
+SELECT
+    EXTRACT(MONTH FROM sale_date) AS month,
+    SUM(total_sale) AS revenue
+FROM retail_sales
+GROUP BY month
+ORDER BY month;
+
+-- Q10. Best-selling category by revenue
+
+SELECT
+    category,
+    SUM(total_sale) AS revenue
+FROM retail_sales
+GROUP BY category
+ORDER BY revenue DESC;
+
