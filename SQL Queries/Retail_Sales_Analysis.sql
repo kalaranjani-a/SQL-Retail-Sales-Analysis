@@ -20,7 +20,7 @@ CREATE TABLE retail_sales (
     total_sale NUMERIC(10,2)
 );
 -- =========================================
--- 1. Data Validation
+-- SECTION 1 : DATA VALIDATION
 -- =========================================
 
 -- Check total number of records
@@ -57,7 +57,7 @@ GROUP BY transactions_id
 HAVING COUNT(*) > 1;
 
 -- =========================================
--- 2. Business Analysis
+-- SECTION 2 : BUSINESS ANALYSIS
 -- =========================================
 
 -- Q1. Retrieve all sales made on 2022-11-05
@@ -183,5 +183,74 @@ ORDER BY total_orders DESC;
 SELECT *
 FROM retail_sales
 WHERE EXTRACT(DOW FROM sale_date) IN (0, 6);
+
+
+-- =========================================
+-- SECTION 3 : ADVANCED SQL
+-- =========================================
+
+-- Q16. Number of transactions by sales shift
+
+SELECT
+    CASE
+        WHEN EXTRACT(HOUR FROM sale_time) < 12 THEN 'Morning'
+        WHEN EXTRACT(HOUR FROM sale_time) BETWEEN 12 AND 17 THEN 'Afternoon'
+        ELSE 'Evening'
+    END AS sales_shift,
+    COUNT(*) AS total_transactions
+FROM retail_sales
+GROUP BY sales_shift
+ORDER BY total_transactions DESC;
+
+
+-- Q17. Revenue generated each month
+
+SELECT
+    EXTRACT(MONTH FROM sale_date) AS month,
+    SUM(total_sale) AS total_revenue
+FROM retail_sales
+GROUP BY month
+ORDER BY total_revenue DESC;
+
+
+-- Q18. Average quantity purchased by category
+
+SELECT
+    category,
+    ROUND(AVG(quantity), 2) AS avg_quantity
+FROM retail_sales
+GROUP BY category
+ORDER BY avg_quantity DESC;
+
+
+-- Q19. Customers whose total spending is above the average customer spending
+
+SELECT
+    customer_id,
+    SUM(total_sale) AS total_spent
+FROM retail_sales
+GROUP BY customer_id
+HAVING SUM(total_sale) >
+(
+    SELECT AVG(customer_total)
+    FROM
+    (
+        SELECT
+            customer_id,
+            SUM(total_sale) AS customer_total
+        FROM retail_sales
+        GROUP BY customer_id
+    ) AS customer_summary
+)
+ORDER BY total_spent DESC;
+
+
+-- Q20. Highest single sale in each category
+
+SELECT
+    category,
+    MAX(total_sale) AS highest_sale
+FROM retail_sales
+GROUP BY category;
 
 
