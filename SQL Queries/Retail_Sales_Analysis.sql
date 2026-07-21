@@ -136,3 +136,52 @@ FROM retail_sales
 GROUP BY category
 ORDER BY revenue DESC;
 
+
+-- Q11. Top 5 customers by total spending
+
+SELECT
+    customer_id,
+    SUM(total_sale) AS total_spent
+FROM retail_sales
+GROUP BY customer_id
+ORDER BY total_spent DESC
+LIMIT 5;
+
+
+-- Q12. Total quantity sold by category
+
+SELECT
+    category,
+    SUM(quantity) AS total_quantity
+FROM retail_sales
+GROUP BY category
+ORDER BY total_quantity DESC;
+
+
+-- Q13. Average transaction value by gender
+
+SELECT
+    gender,
+    ROUND(AVG(total_sale), 2) AS average_transaction
+FROM retail_sales
+GROUP BY gender;
+
+
+-- Q14. Customers with more than 5 purchases
+
+SELECT
+    customer_id,
+    COUNT(*) AS total_orders
+FROM retail_sales
+GROUP BY customer_id
+HAVING COUNT(*) > 5
+ORDER BY total_orders DESC;
+
+
+-- Q15. Sales made on weekends
+
+SELECT *
+FROM retail_sales
+WHERE EXTRACT(DOW FROM sale_date) IN (0, 6);
+
+
