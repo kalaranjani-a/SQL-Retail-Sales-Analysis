@@ -254,3 +254,74 @@ FROM retail_sales
 GROUP BY category;
 
 
+-- Q21. Rank categories by total revenue
+
+SELECT
+    category,
+    SUM(total_sale) AS total_revenue,
+    RANK() OVER (ORDER BY SUM(total_sale) DESC) AS revenue_rank
+FROM retail_sales
+GROUP BY category;
+
+
+-- Q22. Running total of daily sales
+
+WITH daily_sales AS (
+    SELECT
+        sale_date,
+        SUM(total_sale) AS daily_revenue
+    FROM retail_sales
+    GROUP BY sale_date
+)
+
+SELECT
+    sale_date,
+    daily_revenue,
+    SUM(daily_revenue) OVER (ORDER BY sale_date) AS running_total
+FROM daily_sales;
+
+
+-- Q23. Highest transaction in each month
+
+SELECT
+    EXTRACT(MONTH FROM sale_date) AS month,
+    MAX(total_sale) AS highest_sale
+FROM retail_sales
+GROUP BY month
+ORDER BY month;
+
+
+-- Q24. Number of purchases made by each customer
+
+SELECT
+    customer_id,
+    COUNT(*) AS purchase_count
+FROM retail_sales
+GROUP BY customer_id
+ORDER BY purchase_count DESC;
+
+
+-- Q25. Top spending customer in each category
+
+WITH customer_category_sales AS (
+    SELECT
+        category,
+        customer_id,
+        SUM(total_sale) AS total_spent
+    FROM retail_sales
+    GROUP BY category, customer_id
+)
+
+SELECT *
+FROM (
+    SELECT
+        category,
+        customer_id,
+        total_spent,
+        RANK() OVER (
+            PARTITION BY category
+            ORDER BY total_spent DESC
+        ) AS rank_no
+    FROM customer_category_sales
+) ranked_customers
+WHERE rank_no = 1;
