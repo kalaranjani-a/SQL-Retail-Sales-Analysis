@@ -3,11 +3,14 @@
 Project: SQL Retail Sales Analysis
 Author: Kala
 Database: PostgreSQL
-Description: Portfolio project analyzing retail sales data
+Description : SQL analysis of retail sales data using PostgreSQL
 =========================================
 */
+
+DROP TABLE IF EXISTS retail_sales;
+
 CREATE TABLE retail_sales (
-    transactions_id INT,
+    transactions_id INT PRIMARY KEY,
     sale_date DATE,
     sale_time TIME,
     customer_id INT,
@@ -19,6 +22,11 @@ CREATE TABLE retail_sales (
     cogs NUMERIC(10,2),
     total_sale NUMERIC(10,2)
 );
+
+-- Data imported using pgAdmin Import/Export Wizard
+-- Source file: Retail_Sales.csv
+
+
 -- =========================================
 -- SECTION 1 : DATA VALIDATION
 -- =========================================
@@ -55,6 +63,16 @@ SELECT
 FROM retail_sales
 GROUP BY transactions_id
 HAVING COUNT(*) > 1;
+
+-- Check distinct product categories
+SELECT DISTINCT category
+FROM retail_sales;
+
+-- Check date range
+SELECT
+    MIN(sale_date) AS first_sale_date,
+    MAX(sale_date) AS last_sale_date
+FROM retail_sales;
 
 -- =========================================
 -- SECTION 2 : BUSINESS ANALYSIS
@@ -325,3 +343,10 @@ FROM (
     FROM customer_category_sales
 ) ranked_customers
 WHERE rank_no = 1;
+
+
+/*
+=========================================
+End of SQL Retail Sales Analysis Project
+=========================================
+*/
